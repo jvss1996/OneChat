@@ -21,7 +21,13 @@ public class ChatController {
     public void processMessage(@Payload ChatMessage chatMessage) {
         ChatMessage savedMsg = chatMessageService.save(chatMessage);
         messagingTemplate.convertAndSendToUser(
-                chatMessage.getRecipientId(), "/queue/messages", null
+                chatMessage.getRecipientId(), "/queue/messages",
+                ChatNotification.builder()
+                        .id(savedMsg.getId())
+                        .senderId(savedMsg.getSenderId())
+                        .recipientId(savedMsg.getRecipientId())
+                        .content(savedMsg.getContent())
+                        .build()
         );
     }
 
